@@ -1,0 +1,275 @@
+/* General Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    text-align: center;
+    color: #333;
+}
+
+header {
+    background-color: rgba(230, 237, 231, 0.87);
+    padding: 10px 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.navbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.nav-button {
+    background-color: #37aa72;
+    color: white;
+    border: none;
+    padding: 14px 26px;
+    margin: 0 10px;
+    cursor: pointer;
+    font-size: 22px;
+    border-radius: 8px;
+    transition: all 0.4s ease;
+}
+
+.nav-button:hover {
+    background-color: #11e87f;
+    transform: scale(1.08);
+}
+
+.header-title {
+    font-size: 4.5em;
+    color: #faf1f1;
+    margin: 10px 0;
+}
+
+/* Video Section */
+.video-section {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.video-section video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.search-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2; /* Ensure search bar is above video */
+}
+
+.slogan {
+    font-size: 3.5em;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.search-container {
+    width: 50%;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 15px;
+    border-radius: 25px;
+    border: 2px solid #555;
+    font-size: 18px;
+    outline: none;
+    z-index: 3;
+}
+
+.search-bar:focus {
+    border-color: #777;
+}
+
+.search-button {
+    padding: 15px;
+    background-color: #37aa72;
+    border: none;
+    border-radius: 25px;
+    margin-left: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+    z-index: 3;
+}
+
+.search-button:hover {
+    background-color: #2980b9;
+}
+
+/* Recipe List Styling */
+.recipe-list {
+    margin: 20px;
+    padding-top: 100px; /* Add padding to avoid overlap with fixed header */
+}
+
+.recipe-list h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #444;
+}
+
+.recipes {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+
+.detail-button, .recipe-url-button {
+    background-color: rgba(36, 181, 40, 0.87);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.detail-button:hover, .recipe-url-button:hover {
+    background-color: #e61313;
+}
+
+/* Profile and Chatbot Sections */
+.profile-section, .chatbot-section {
+    padding: 20px;
+}
+
+.profile-pic {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 20px;
+}
+
+.profile-section p {
+    font-size: 20px;
+}
+
+.chatbot-box {
+    margin-top: 20px;
+}
+
+.chat-input {
+    width: 80%;
+    padding: 10px;
+    border-radius: 25px;
+    border: 2px solid #555;
+    font-size: 16px;
+    outline: none;
+}
+
+.send-button {
+    padding: 10px;
+    background-color: #1abc9c;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.send-button:hover {
+    background-color: #16a085;
+}
+
+.recipe-container {
+    display: block; /* Change from flex to block for single column layout */
+    margin: 20px 0; /* Add space between the cards */
+}
+
+.recipe-card {
+    width: 100%;  /* Full width for each recipe card */
+    margin-bottom: 20px;  /* Adds spacing between the cards */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-card h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.recipe-card p {
+    margin: 5px 0;
+}
+
+@media (max-width: 768px) {
+    .recipe-card {
+        width: 100%; /* Full width on smaller screens */
+    }
+}
+
+#chatbot-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    right: 20px; /* Align the popup to the left side */
+    bottom: 80px; /* Adjust based on the icon's position */
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.popup-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 800px;
+    position: relative;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}

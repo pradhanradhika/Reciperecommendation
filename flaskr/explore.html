@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Search</title>
+    <link rel="stylesheet" href="explore.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Find Your Recipe</h1>
+            <p>Enter the name of a recipe to discover its cooking instructions and get personalized recommendations.</p>
+        </header>
+
+        <div class="search-section">
+            <input type="text" id="recipe-search" placeholder="Search for a recipe..." class="search-bar">
+            <button class="search-btn" onclick="searchRecipe()">Search</button>
+        </div>
+
+        <div id="recipe-result" class="recipe-details">
+            <!-- Recipe details will be injected here -->
+        </div>
+
+        <div class="recommendations">
+            <h2>Recommended Recipes</h2>
+            <div id="recommended-recipes" class="recommended-list">
+                <!-- Recommended recipes will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>

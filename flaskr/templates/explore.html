@@ -3,33 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Search</title>
-    <link rel="stylesheet" href="explore.css">
+    <title>AI Recipe Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='explore.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>Find Your Recipe</h1>
-            <p>Enter the name of a recipe to discover its cooking instructions and get personalized recommendations.</p>
-        </header>
-
-        <div class="search-section">
-            <input type="text" id="recipe-search" placeholder="Search for a recipe..." class="search-bar">
-            <button class="search-btn" onclick="searchRecipe()">Search</button>
-        </div>
-
-        <div id="recipe-result" class="recipe-details">
-            <!-- Recipe details will be injected here -->
-        </div>
-
-        <div class="recommendations">
-            <h2>Recommended Recipes</h2>
-            <div id="recommended-recipes" class="recommended-list">
-                <!-- Recommended recipes will be injected here -->
+    <header>
+        <nav>
+            <div class="dropdown" style="float: left;">
+                <button class="dropbtn">Menu <i class="fa fa-caret-down"></i></button>
+                <div class="dropdown-content">
+                    <a href="#" id="home" onclick="showSection('main-screen')">Home</a>
+                    <a href="#" id="profile" onclick="showSection('profile-section')">Profile</a>
+                    <a href="#" id="chatbot" onclick="showSection('chatbot-screen')">Chatbot</a>
+                </div>
             </div>
-        </div>
-    </div>
+        </nav>
+    </header>
+    <main>
+        <!-- Main Screen Section -->
+        <section id="main-screen" class="content-section">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search for recipes..." oninput="autocompleteSearch(this.value)">
+                <div id="autocomplete-list" class="autocomplete-items"></div>
+                <button class="search-btn" onclick="searchRecipes()"><i class="fas fa-search"></i></button>
+            </div>
 
-    <script src="{{ url_for('static', filename='main.js') }}"></script>
+            <div class="recipe-sections">
+                <div class="recipe-category">
+                    <h3>Recommended</h3>
+                    <div class="recipe-menu">
+                        <div class="recipe-item">
+                            <img src="https://via.placeholder.com/150?text=Recipe+1" alt="Recipe 1">
+                            <p>Recipe Name 1</p>
+                        </div>
+                        <div class="recipe-item">
+                            <img src="https://via.placeholder.com/150?text=Recipe+2" alt="Recipe 2">
+                            <p>Recipe Name 2</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chatbot Screen Section -->
+        <section id="chatbot-screen" class="content-section" style="display: none;">
+            <div class="chatbot-container">
+                <h2>AI Recipe Generator Chatbot</h2>
+                <div class="input-section">
+                    <label>
+                        <input type="text" id="recipe-name" placeholder="Enter recipe name...">
+                    </label>
+                    <label>
+                        <input type="number" id="people" placeholder="Number of people" min="1">
+                    </label>
+                    <label>
+                        <select id="diet">
+                            <option value="" disabled selected>Diet type</option>
+                            <option value="vegetarian">Vegetarian</option>
+                            <option value="vegan">Vegan</option>
+                            <option value="jain">Jain</option>
+                            <option value="non-vegetarian">Non-Vegetarian</option>
+                        </select>
+                    </label>
+                    <button class="generate-btn" onclick="generateRecipe()">Generate Recipe</button>
+                </div>
+                <div class="recipe-output" id="recipe-output"></div>
+            </div>
+        </section>
+
+        <!-- Profile Screen Section -->
+        <section id="profile-section" class="content-section" style="display: none;">
+            <div class="profile-container">
+                <h2>Your Profile</h2>
+                <div class="profile-details">
+                    <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-picture">
+                    <div class="profile-info">
+                        <p><strong>Name:</strong> John Doe</p>
+                        <p><strong>Email:</strong> johndoe@example.com</p>
+                    </div>
+                </div>
+                <div class="recipe-output" id="profile-recipes"></div>
+            </div>
+        </section>
+    </main>
+
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
 </body>
 </html>

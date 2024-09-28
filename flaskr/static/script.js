@@ -1,50 +1,55 @@
-document.getElementById('ingredient-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const ingredientsInput = document.getElementById('ingredients').value.trim();
-
-    document.getElementById('home').addEventListener('click', function() {
-    window.location.href = '/';
-});
-
-document.getElementById('profile').addEventListener('click', function() {
-    window.location.href = '/profile';
-});
-
-
-
 document.addEventListener("DOMContentLoaded", function () {
+    // Explore button functionality
+    document.getElementById('explore').addEventListener('click', function() {
+        console.log("Explore button clicked");
+        window.location.href = '/explore';
+    });
+
+    // Home button functionality
+    document.getElementById('home').addEventListener('click', function() {
+        window.location.href = '/';
+    });
+
+    // Profile button functionality
+    document.getElementById('profile').addEventListener('click', function() {
+        window.location.href = '/profile';
+    });
+
+    // Chatbot button functionality
     const chatbotButton = document.getElementById("chatbot");
     const chatbotPopup = document.getElementById("chatbot-popup");
     const closeButton = document.querySelector(".close-btn");
 
-    // Open the chatbot popup
     chatbotButton.addEventListener("click", function () {
         chatbotPopup.style.display = "block";
         window.open("http://127.0.0.1:7860", "_blank");
     });
 
-    // Close the chatbot popup
     closeButton.addEventListener("click", function () {
         chatbotPopup.style.display = "none";
     });
 
-    // Close the popup if the user clicks outside of it
     window.addEventListener("click", function (event) {
-        if (event.target == chatbotPopup) {
+        if (event.target === chatbotPopup) {
             chatbotPopup.style.display = "none";
         }
     });
 });
 
+// Form submission for ingredient search
+document.getElementById('ingredient-form').addEventListener('submit', function (e) {
+    e.preventDefault();  // Prevent the form from reloading the page
 
-     if (!ingredientsInput) {
+    const ingredientsInput = document.getElementById('ingredients').value.trim();
+
+    if (!ingredientsInput) {
         alert("Please enter some ingredients!");
         return;
     }
 
     const ingredientsArray = ingredientsInput.split(',').map(ingredient => ingredient.trim());
 
+    // Send the ingredients to the server to find recipes
     fetch('/find_recipe', {
         method: 'POST',
         headers: {
@@ -62,6 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        // Display the found recipes
         recipes.forEach(recipe => {
             const recipeCard = document.createElement('div');
             recipeCard.classList.add('recipe-card');
@@ -89,6 +95,4 @@ document.addEventListener("DOMContentLoaded", function () {
         const recipeContainer = document.getElementById('recipe-result');
         recipeContainer.innerHTML = '<p>Something went wrong. Please try again later.</p>';
     });
-
-
 });

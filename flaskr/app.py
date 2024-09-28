@@ -54,6 +54,15 @@ def get_top_recipe_indices_from_ingredients(ingredients_list, top_n=5):
 def home():
     return render_template('index.html')
 
+@app.route('/explore')
+def explore_page():
+    return render_template('explore.html')
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+
 # Route to start Gradio Chatbot UI
 from flask import redirect
 

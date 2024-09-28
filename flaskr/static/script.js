@@ -16,24 +16,34 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Chatbot button functionality
-    const chatbotButton = document.getElementById("chatbot");
-    const chatbotPopup = document.getElementById("chatbot-popup");
-    const closeButton = document.querySelector(".close-btn");
+    const chatbotIcon = document.getElementById("chatbot-icon");
+            const chatbotPopup = document.getElementById("chatbot-popup");
+            const closeButton = document.querySelector(".close-btn");
 
-    chatbotButton.addEventListener("click", function () {
-        chatbotPopup.style.display = "block";
-        window.open("http://127.0.0.1:7860", "_blank");
-    });
+            // Ensure the chatbot icon exists
+            if (chatbotIcon) {
+                chatbotIcon.addEventListener("click", function () {
+                    chatbotPopup.style.display = "block"; // Show the popup
+                });
+            } else {
+                console.error("Chatbot icon not found.");
+            }
 
-    closeButton.addEventListener("click", function () {
-        chatbotPopup.style.display = "none";
-    });
+            // Ensure the close button exists
+            if (closeButton) {
+                closeButton.addEventListener("click", function () {
+                    chatbotPopup.style.display = "none"; // Hide the popup
+                });
+            } else {
+                console.error("Close button not found.");
+            }
 
-    window.addEventListener("click", function (event) {
-        if (event.target === chatbotPopup) {
-            chatbotPopup.style.display = "none";
-        }
-    });
+            // Close the popup if the user clicks outside of it
+            window.addEventListener("click", function (event) {
+                if (event.target === chatbotPopup) {
+                    chatbotPopup.style.display = "none";
+                }
+            });
 });
 
 // Form submission for ingredient search

@@ -1,14 +1,25 @@
 import subprocess
-
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 import ast
 import numpy as np
 from config import Config
+from flask import redirect, url_for, flash
+from flask_mysqldb import MySQL
+from werkzeug.security import generate_password_hash, check_password_hash
+
 app = Flask(__name__)
 
 app.config.from_object(Config)
+
+app.config['MYSQL_HOST'] = 'localhost'  # Your MySQL host
+app.config['MYSQL_USER'] = 'root'  # Your MySQL username
+app.config['MYSQL_PASSWORD'] = 'Ra@238gs'  # Your MySQL password
+app.config['MYSQL_DB'] = 'recipe-rec'  # Your database name
+
+mysql = MySQL(app)
+app.secret_key = 'your_secret_key'
 
 # Load and process the dataset
 my_data = pd.read_csv(r'C:\Users\Radhika\Downloads\cleaned_data.csv')
@@ -49,9 +60,72 @@ def get_top_recipe_indices_from_ingredients(ingredients_list, top_n=5):
     top_recipe_indices = [index for index, score in sorted_scores[:top_n]]
     return top_recipe_indices
 
-
 @app.route('/')
 def home():
+    return render_template('login.html')
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Check for empty fields
+        if not name or not email or not password:
+            flash('Please enter your name, email, and password', 'error')
+            return redirect(url_for('signup'))
+
+        # Check if the email is already registered
+        cursor = mysql.connection.cursor()
+        cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+        user = cursor.fetchone()
+
+        if user:
+            flash('Email already registered!', 'error')
+        else:
+            # Insert the user into the database
+            cursor.execute('INSERT INTO users (name, email, password) VALUES (%s, %s, %s)',
+                           (name, email, password))
+            mysql.connection.commit()
+            cursor.close()
+            flash('Successfully signed up! You can now sign in.', 'success')
+            return redirect(url_for('signin'))
+
+    return render_template('login.html')
+
+
+# Signin Route
+@app.route('/signin', methods=['GET', 'POST'])
+def signin():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Check for empty fields
+        if not email or not password:
+            flash('Please enter your email and password', 'error')
+            return redirect(url_for('signin'))
+
+        # Check if the user exists
+        cursor = mysql.connection.cursor()
+        cursor.execute('SELECT * FROM users WHERE email = %s AND password = %s', (email, password))
+        user = cursor.fetchone()
+        cursor.close()
+
+        if user:
+            flash('Successfully signed in!', 'success')
+            # Redirect to a welcome page or user dashboard
+            return redirect(url_for('index_page'))  # Create this route to display the dashboard
+        else:
+            flash('Invalid email or password!', 'error')
+
+    return render_template('login.html')
+
+
+@app.route('/index')
+def index_page():
     return render_template('index.html')
 
 @app.route('/explore')

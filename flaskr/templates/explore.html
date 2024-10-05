@@ -26,7 +26,7 @@
         <!-- Main Screen Section -->
         <section id="main-screen" class="content-section">
             <div class="search-bar">
-                <form action="{{ url_for('search') }}" method="POST">
+                <form method="POST" action="/search">
                     <input type="text" name="search_query" id="search-input" placeholder="Search for recipes..." oninput="autocompleteSearch(this.value)">
                   <!--  <div id="autocomplete-list" class="autocomplete-items"></div> -->
                     <button class="search-btn" id="search-button" ><i class="fas fa-search"></i></button>
@@ -34,23 +34,24 @@
             </div>
 
             <div class="recipe-sections">
-                <div class="recipe-category">
-                    <h3>Recommended Based on Your Search History</h3>
-                    <div class="recipe-menu">
-                        {% if recommendations %}
-                            {% for recipe, similarity in recommendations %}
-                                <div class="recipe-item">
-                                    <img src="https://via.placeholder.com/150?text={{ recipe }}" alt="{{ recipe }}">
-                                    <p>{{ recipe }}</p> <!-- Recipe name -->
-                                    <p>Similarity Score: {{ similarity|round(2) }}</p>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <p>No recommendations available.</p>
-                        {% endif %}
+    <div class="recipe-category">
+        <h3>Recommended Based on Your Search History</h3>
+        <div class="recipe-menu">
+            {% if recommendations %}
+                {% for recipe, similarity, image_url in recommendations %}
+                    <div class="recipe-item">
+                        <img src="{{ image_url if image_url else 'default_image_url.jpg' }}" alt="{{ recipe }} image" style="width: 150px; height: 150px;">
+                        <p>{{ recipe }}</p> <!-- Recipe name -->
+                        <p>Similarity Score: {{ similarity|round(2) }}</p>
                     </div>
-                </div>
-            </div>
+                {% endfor %}
+            {% else %}
+                <p>No recommendations available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
         </section>
 
         <!-- Chatbot Screen Section -->

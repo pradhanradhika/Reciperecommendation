@@ -22,10 +22,10 @@ data = pd.read_csv('C:/Users/Radhika/PycharmProjects/RecipeRecommendation/flaskr
 #model=load_model()
 app.config.from_object(Config)
 
-app.config['MYSQL_HOST'] = 'localhost'  # Your MySQL host
-app.config['MYSQL_USER'] = 'root'  # Your MySQL username
-app.config['MYSQL_PASSWORD'] = 'Ra@238gs'  # Your MySQL password
-app.config['MYSQL_DB'] = 'recipe-rec'  # Your database name
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'Ra@238gs'
+app.config['MYSQL_DB'] = 'recipe-rec'
 
 mysql = MySQL(app)
 app.secret_key = 'your_secret_key'
@@ -145,15 +145,28 @@ def index_page():
     return render_template('index.html', user_name=user_name)
 
 
-
 @app.route('/explore')
 def explore_page():
-    return render_template('explore.html')
+    user_id = session.get('user_id')
+
+    # Fetch user's search history from the database
+    search_history = fetch_search_history(user_id)
+
+    # List of all recipe names in your dataset
+    all_recipe_names = list(data['name'])
+
+    # Recommend recipes based on the search history
+    recommendations = recommend_recipes(search_history, all_recipe_names) if search_history else []
+
+    # Pass recommendations to the template
+    return render_template('explore.html', recommendations=recommendations)
+
 
 def store_search_history(user_id, search_term):
+
     try:
         cursor = mysql.connection.cursor()
-        query = "INSERT INTO search_history (user_id, search_term, search_time) VALUES (%s, %s, NOW())"
+        cursor.execute('INSERT INTO search_history (user_id, search_term) VALUES (%s, %s)', (user_id, search_term))
         mysql.connection.commit()
         cursor.close()
     except Exception as e:
@@ -197,27 +210,39 @@ def get_recipe_vector(recipe_name):
 
 
 # Function to recommend recipes based on search history
-def recommend_recipes(search_terms, all_recipes, top_n=5):
-    # Combine all search terms into one vector
+import re
+
+
+# Function to check if a string contains only English letters
+def is_english(text):
+    # The regular expression matches only English letters (a-z, A-Z) and spaces
+    return bool(re.match("^[a-zA-Z\s]+$", text))
+
+
+# Function to recommend recipes based on search history
+# Function to recommend recipes based on search history (now includes image URLs)
+def recommend_recipes(search_terms, all_recipes, top_n=15):
     search_vectors = [get_recipe_vector(term) for term in search_terms if get_recipe_vector(term) is not None]
 
     if len(search_vectors) == 0:
         return "No valid search terms found in the history."
 
-    # Average the vectors for the search terms to create a user search profile
     search_profile = np.mean(search_vectors, axis=0)
-
     similarities = []
-    # Compare the search profile vector with each recipe in the dataset
-    for recipe_name in all_recipes:
+
+    for index, recipe_name in enumerate(all_recipes):
         recipe_vector = get_recipe_vector(recipe_name)
         if recipe_vector is not None:
             similarity = cosine_similarity([search_profile], [recipe_vector])[0][0]
-            similarities.append((recipe_name, similarity))
 
-    # Sort recipes by similarity and return top N recommendations
+            if is_english(recipe_name):
+                # Get the corresponding image URL for this recipe from the dataset
+                image_url = data.iloc[index]['image_url']  # Assuming 'image_url' is the column in the dataset
+                similarities.append((recipe_name, similarity, image_url))
+
     similarities = sorted(similarities, key=lambda x: x[1], reverse=True)
 
+    # Return the top N recipes along with their names, similarity scores, and image URLs
     return similarities[:top_n]
 
 
@@ -225,8 +250,7 @@ def recommend_recipes(search_terms, all_recipes, top_n=5):
 @app.route('/search', methods=['POST'])
 def search():
     user_id = session['user_id']
-
-    search_term = request.form.get('search_term')
+    search_term = request.form.get('search_query')
 
     # Store the search term in the database
     store_search_history(user_id, search_term)
@@ -238,7 +262,7 @@ def search():
         return "No search history found for the user."
 
     # List of all recipe names in your dataset
-    all_recipe_names = list(data['name'])  # Assuming 'data' is the DataFrame containing recipes
+    all_recipe_names = list(data['name'])
 
     # Recommend recipes based on the search history
     recommendations = recommend_recipes(search_history, all_recipe_names)
@@ -246,6 +270,7 @@ def search():
     # Before rendering the template
     print("Recommendations:", recommendations)
 
+    # Pass recommendations to the template, including image URLs
     return render_template('explore.html', recommendations=recommendations)
 
 

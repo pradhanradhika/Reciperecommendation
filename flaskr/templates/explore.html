@@ -6,6 +6,8 @@
     <title>AI Recipe Generator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='explore.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- Add jQuery here -->
+</head>
 </head>
 <body>
     <header>
@@ -24,23 +26,28 @@
         <!-- Main Screen Section -->
         <section id="main-screen" class="content-section">
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search for recipes..." oninput="autocompleteSearch(this.value)">
-                <div id="autocomplete-list" class="autocomplete-items"></div>
-                <button class="search-btn" onclick="searchRecipes()"><i class="fas fa-search"></i></button>
+                <form action="{{ url_for('search') }}" method="POST">
+                    <input type="text" name="search_query" id="search-input" placeholder="Search for recipes..." oninput="autocompleteSearch(this.value)">
+                  <!--  <div id="autocomplete-list" class="autocomplete-items"></div> -->
+                    <button class="search-btn" id="search-button" ><i class="fas fa-search"></i></button>
+                </form>
             </div>
 
             <div class="recipe-sections">
                 <div class="recipe-category">
-                    <h3>Recommended</h3>
+                    <h3>Recommended Based on Your Search History</h3>
                     <div class="recipe-menu">
-                        <div class="recipe-item">
-                            <img src="https://via.placeholder.com/150?text=Recipe+1" alt="Recipe 1">
-                            <p>Recipe Name 1</p>
-                        </div>
-                        <div class="recipe-item">
-                            <img src="https://via.placeholder.com/150?text=Recipe+2" alt="Recipe 2">
-                            <p>Recipe Name 2</p>
-                        </div>
+                        {% if recommendations %}
+                            {% for recipe, similarity in recommendations %}
+                                <div class="recipe-item">
+                                    <img src="https://via.placeholder.com/150?text={{ recipe }}" alt="{{ recipe }}">
+                                    <p>{{ recipe }}</p> <!-- Recipe name -->
+                                    <p>Similarity Score: {{ similarity|round(2) }}</p>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No recommendations available.</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -87,7 +94,6 @@
             </div>
         </section>
     </main>
-
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 

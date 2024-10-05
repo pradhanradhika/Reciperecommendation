@@ -46,6 +46,8 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 });
 
+
+
 // Form submission for ingredient search
 document.getElementById('ingredient-form').addEventListener('submit', function (e) {
     e.preventDefault();  // Prevent the form from reloading the page

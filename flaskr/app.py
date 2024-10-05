@@ -247,31 +247,65 @@ def recommend_recipes(search_terms, all_recipes, top_n=15):
 
 
 # Flask route to handle search and recommendations
+# Flask route to handle search and recommendations
 @app.route('/search', methods=['POST'])
 def search():
     user_id = session['user_id']
-    search_term = request.form.get('search_query')
+    search_term = request.form.get('search_query').strip().lower()
 
     # Store the search term in the database
     store_search_history(user_id, search_term)
 
-    # Fetch user's search history from the database
-    search_history = fetch_search_history(user_id)
+    # Fetch the recipe directly from the dataset
+    matched_recipe = my_data[my_data['name'].str.lower() == search_term]
 
-    if not search_history:
-        return "No search history found for the user."
+    if not matched_recipe.empty:
+        # Recipe found, extract details
+        recipe_details = matched_recipe.iloc[0]
+        recipe_data = {
+            'name': recipe_details['name'],
+            'ingredients': recipe_details['ingredients'],
+            'instructions': recipe_details['instructions'],
+            'image_url': recipe_details['image_url'],
+            'message': None  # No message needed if the recipe is found
+        }
+    else:
+        # If no exact match, find the closest matching recipe
+        closest_recipes = recommend_recipes([search_term], list(my_data['name']), top_n=1)
 
-    # List of all recipe names in your dataset
-    all_recipe_names = list(data['name'])
+        if closest_recipes:
+            closest_recipe_name, similarity, image_url = closest_recipes[0]
 
-    # Recommend recipes based on the search history
-    recommendations = recommend_recipes(search_history, all_recipe_names)
+            # Fetch details of the closest matching recipe
+            closest_recipe_details = my_data[my_data['name'].str.lower() == closest_recipe_name.lower()]
+            if not closest_recipe_details.empty:
+                closest_recipe = closest_recipe_details.iloc[0]
+                recipe_data = {
+                    'name': closest_recipe['name'],
+                    'ingredients': closest_recipe['ingredients'],
+                    'instructions': closest_recipe['instructions'],
+                    'image_url': closest_recipe['image_url'],
+                    'message': f'Recipe not found. However, this similar recipe is: {closest_recipe_name}.'
+                }
+            else:
+                recipe_data = {
+                    'name': None,
+                    'ingredients': None,
+                    'instructions': None,
+                    'image_url': None,
+                    'message': 'No similar recipes found.'
+                }
+        else:
+            recipe_data = {
+                'name': None,
+                'ingredients': None,
+                'instructions': None,
+                'image_url': None,
+                'message': 'No similar recipes found.'
+            }
 
-    # Before rendering the template
-    print("Recommendations:", recommendations)
-
-    # Pass recommendations to the template, including image URLs
-    return render_template('explore.html', recommendations=recommendations)
+    # Render the explore page with the recipe data
+    return render_template('explore.html', recipe_data=recipe_data)
 
 
 @app.route('/profile')

@@ -6,8 +6,7 @@
     <title>AI Recipe Generator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='explore.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- Add jQuery here -->
-</head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
     <header>
@@ -28,30 +27,43 @@
             <div class="search-bar">
                 <form method="POST" action="/search">
                     <input type="text" name="search_query" id="search-input" placeholder="Search for recipes..." oninput="autocompleteSearch(this.value)">
-                  <!--  <div id="autocomplete-list" class="autocomplete-items"></div> -->
-                    <button class="search-btn" id="search-button" ><i class="fas fa-search"></i></button>
+                    <button class="search-btn" id="search-button"><i class="fas fa-search"></i></button>
                 </form>
             </div>
 
-            <div class="recipe-sections">
-    <div class="recipe-category">
-        <h3>Recommended Based on Your Search History</h3>
-        <div class="recipe-menu">
-            {% if recommendations %}
-                {% for recipe, similarity, image_url in recommendations %}
-                    <div class="recipe-item">
-                        <img src="{{ image_url if image_url else 'default_image_url.jpg' }}" alt="{{ recipe }} image" style="width: 150px; height: 150px;">
-                        <p>{{ recipe }}</p> <!-- Recipe name -->
-                        <p>Similarity Score: {{ similarity|round(2) }}</p>
-                    </div>
-                {% endfor %}
+            {% if recipe_data %}
+                <div class="recipe-details">
+                    <h2>{% if recipe_data.message %}{{ recipe_data.message }}{% endif %}</h2>
+                    {% if recipe_data.image_url %}
+                        <img src="{{ recipe_data.image_url }}" alt="{{ recipe_data.name }}" style="width: 150px; height: 150px;">
+                    {% endif %}
+                    <h3>{{ recipe_data.name }}</h3>
+                    <h4>Ingredients:</h4>
+                    <p>{{ recipe_data.ingredients }}</p>
+                    <h4>Instructions:</h4>
+                    <p>{{ recipe_data.instructions }}</p>
+                    <button onclick="window.history.back();">Back to Recommendations</button>
+                </div>
             {% else %}
-                <p>No recommendations available.</p>
+                <div class="recipe-sections">
+                    <div class="recipe-category">
+                        <h3>Recommended Based on Your Search History</h3>
+                        <div class="recipe-menu">
+                            {% if recommendations %}
+                                {% for recipe, similarity, image_url in recommendations %}
+                                    <div class="recipe-item">
+                                        <img src="{{ image_url if image_url else 'default_image_url.jpg' }}" alt="{{ recipe }} image" style="width: 150px; height: 150px;">
+                                        <p>{{ recipe }}</p> <!-- Recipe name -->
+                                        <p>Similarity Score: {{ similarity|round(2) }}</p>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No recommendations available.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             {% endif %}
-        </div>
-    </div>
-</div>
-
         </section>
 
         <!-- Chatbot Screen Section -->
@@ -97,6 +109,5 @@
     </main>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-
 </body>
 </html>

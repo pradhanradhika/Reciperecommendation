@@ -104,6 +104,7 @@ def signup():
     return render_template('login.html')
 
 
+
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
     if request.method == 'POST':
@@ -138,11 +139,25 @@ def signin():
     return render_template('login.html')
 
 
+@app.route('/logout')
+def logout():
+    # Clear session data (if you're using session management)
+    session.clear()
+
+    # Redirect to login page after logging out
+    return redirect(url_for('signin'))
+
+@app.route('/home')
+def homepage():
+    return render_template('index.html')  # Make sure to have an index.html or your homepage template here
 
 @app.route('/index')
 def index_page():
     user_name = session.get('user_name')
     return render_template('index.html', user_name=user_name)
+
+
+
 
 
 @app.route('/explore')
@@ -209,7 +224,7 @@ def get_recipe_vector(recipe_name):
         return None
 
 
-# Function to recommend recipes based on search history
+
 import re
 
 
@@ -219,8 +234,8 @@ def is_english(text):
     return bool(re.match("^[a-zA-Z\s]+$", text))
 
 
+
 # Function to recommend recipes based on search history
-# Function to recommend recipes based on search history (now includes image URLs)
 def recommend_recipes(search_terms, all_recipes, top_n=15):
     search_vectors = [get_recipe_vector(term) for term in search_terms if get_recipe_vector(term) is not None]
 
@@ -246,8 +261,7 @@ def recommend_recipes(search_terms, all_recipes, top_n=15):
     return similarities[:top_n]
 
 
-# Flask route to handle search and recommendations
-# Flask route to handle search and recommendations
+
 @app.route('/search', methods=['POST'])
 def search():
     user_id = session['user_id']
@@ -256,7 +270,10 @@ def search():
     # Store the search term in the database
     store_search_history(user_id, search_term)
 
-    # Fetch the recipe directly from the dataset
+    # Tokenize the search term into words
+    search_tokens = set(search_term.split())
+
+    # Fetch the exact recipe from the dataset
     matched_recipe = my_data[my_data['name'].str.lower() == search_term]
 
     if not matched_recipe.empty:
@@ -270,31 +287,31 @@ def search():
             'message': None  # No message needed if the recipe is found
         }
     else:
-        # If no exact match, find the closest matching recipe
-        closest_recipes = recommend_recipes([search_term], list(my_data['name']), top_n=1)
+        # If no exact match, find the recipe with the most matching words
+        max_matches = 0
+        closest_recipe = None
 
-        if closest_recipes:
-            closest_recipe_name, similarity, image_url = closest_recipes[0]
+        # Loop through each recipe name in the dataset
+        for index, recipe_row in my_data.iterrows():
+            recipe_name_tokens = set(recipe_row['name'].lower().split())
+            # Find the number of matching words between the search term and recipe name
+            common_words = search_tokens.intersection(recipe_name_tokens)
+            num_matches = len(common_words)
 
-            # Fetch details of the closest matching recipe
-            closest_recipe_details = my_data[my_data['name'].str.lower() == closest_recipe_name.lower()]
-            if not closest_recipe_details.empty:
-                closest_recipe = closest_recipe_details.iloc[0]
-                recipe_data = {
-                    'name': closest_recipe['name'],
-                    'ingredients': closest_recipe['ingredients'],
-                    'instructions': closest_recipe['instructions'],
-                    'image_url': closest_recipe['image_url'],
-                    'message': f'Recipe not found. However, this similar recipe is: {closest_recipe_name}.'
-                }
-            else:
-                recipe_data = {
-                    'name': None,
-                    'ingredients': None,
-                    'instructions': None,
-                    'image_url': None,
-                    'message': 'No similar recipes found.'
-                }
+            # Keep track of the recipe with the most matches
+            if num_matches > max_matches:
+                max_matches = num_matches
+                closest_recipe = recipe_row
+
+        # If a closest match is found based on word matching
+        if closest_recipe is not None and max_matches > 0:
+            recipe_data = {
+                'name': closest_recipe['name'],
+                'ingredients': closest_recipe['ingredients'],
+                'instructions': closest_recipe['instructions'],
+                'image_url': closest_recipe['image_url'],
+                'message': f'Recipe not found. However, this recipe has {max_matches} matching words: {closest_recipe["name"]}.'
+            }
         else:
             recipe_data = {
                 'name': None,

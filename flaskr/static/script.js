@@ -46,7 +46,19 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 });
 
-
+//function showRecipeDetails(name, image, ingredients, instructions) {
+//            document.getElementById('recipe-recommendations').style.display = 'none';
+//            document.getElementById('recipe-details').style.display = 'block';
+//            document.getElementById('recipe-name').innerText = name;
+//            document.getElementById('recipe-image').src = image;
+//            document.getElementById('recipe-ingredients').innerText = ingredients;
+//            document.getElementById('recipe-instructions').innerText = instructions;
+//        }
+//
+//function hideRecipeDetails() {
+//            document.getElementById('recipe-details').style.display = 'none';
+//            document.getElementById('recipe-recommendations').style.display = 'block';
+//        }
 
 // Form submission for ingredient search
 document.getElementById('ingredient-form').addEventListener('submit', function (e) {

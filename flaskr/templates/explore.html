@@ -11,14 +11,11 @@
 <body>
     <header>
         <nav>
-            <div class="dropdown" style="float: left;">
-                <button class="dropbtn">Menu <i class="fa fa-caret-down"></i></button>
-                <div class="dropdown-content">
-                    <a href="#" id="home" onclick="showSection('main-screen')">Home</a>
-                    <a href="#" id="profile" onclick="showSection('profile-section')">Profile</a>
-                    <a href="#" id="chatbot" onclick="showSection('chatbot-screen')">Chatbot</a>
-                </div>
-            </div>
+
+        <div style="float: left;">
+            <button class="home-btn" onclick="window.location.href='/home';">Home</button>
+        </div>
+
         </nav>
     </header>
     <main>
@@ -47,14 +44,14 @@
             {% else %}
                 <div class="recipe-sections">
                     <div class="recipe-category">
-                        <h3>Recommended Based on Your Search History</h3>
+                        <h3>Recommended Recipes </h3>
                         <div class="recipe-menu">
                             {% if recommendations %}
                                 {% for recipe, similarity, image_url in recommendations %}
                                     <div class="recipe-item">
                                         <img src="{{ image_url if image_url else 'default_image_url.jpg' }}" alt="{{ recipe }} image" style="width: 150px; height: 150px;">
                                         <p>{{ recipe }}</p> <!-- Recipe name -->
-                                        <p>Similarity Score: {{ similarity|round(2) }}</p>
+                                      <!--  <p>Similarity Score: {{ similarity|round(2) }}</p> -->
                                     </div>
                                 {% endfor %}
                             {% else %}

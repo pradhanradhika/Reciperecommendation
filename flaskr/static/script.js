@@ -6,14 +6,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Home button functionality
-    document.getElementById('home').addEventListener('click', function() {
-        window.location.href = '/';
-    });
+//    document.getElementById('home').addEventListener('click', function() {
+//        window.location.href = '/';
+//    });
 
     // Profile button functionality
-    document.getElementById('profile').addEventListener('click', function() {
-        window.location.href = '/profile';
-    });
+//    document.getElementById('profile').addEventListener('click', function() {
+//        window.location.href = '/profile';
+//    });
 
     // Chatbot button functionality
     const chatbotIcon = document.getElementById("chatbot-icon");
@@ -22,12 +22,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Ensure the chatbot icon exists
             if (chatbotIcon) {
-                chatbotIcon.addEventListener("click", function () {
-                    chatbotPopup.style.display = "block"; // Show the popup
-                });
-            } else {
-                console.error("Chatbot icon not found.");
-            }
+    chatbotIcon.addEventListener("click", function () {
+        fetch('/chatbot')  // Trigger the Flask route to launch the chatbot
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.status);  // You can log the status for debugging
+                window.open('http://localhost:7860', '_blank'); // Open Gradio UI in a new tab
+            })
+            .catch(error => {
+                console.error('Error launching chatbot:', error);
+            });
+    });
+} else {
+    console.error("Chatbot icon not found.");
+}
 
             // Ensure the close button exists
             if (closeButton) {

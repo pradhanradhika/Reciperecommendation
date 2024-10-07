@@ -17,7 +17,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 app = Flask(__name__)
 
 model = Word2Vec.load("C:/Users/Radhika/PycharmProjects/RecipeRecommendation/flaskr/models/recipe_word2vec.model")
-data = pd.read_csv('C:/Users/Radhika/PycharmProjects/RecipeRecommendation/flaskr/cleaned_data.csv')  # Adjust path if needed
+data = pd.read_csv('C:/Users/Radhika/PycharmProjects/RecipeRecommendation/flaskr/cleaned_data.csv')
 
 #model=load_model()
 app.config.from_object(Config)
@@ -128,11 +128,11 @@ def signin():
             session['user_name'] = user['name']
             session['user_email'] = email
             session['logged_in'] = True
-            session.permanent = True  # Keeps the session alive until the set session lifetime expires
+            session.permanent = True
 
             flash('Successfully signed in!', 'success')
             # Redirect to a welcome page or user dashboard
-            return redirect(url_for('index_page'))  # Replace this with your actual dashboard route
+            return redirect(url_for('index_page'))
         else:
             flash('Invalid email or password!', 'error')
 
@@ -141,7 +141,7 @@ def signin():
 
 @app.route('/logout')
 def logout():
-    # Clear session data (if you're using session management)
+
     session.clear()
 
     # Redirect to login page after logging out
@@ -149,7 +149,7 @@ def logout():
 
 @app.route('/home')
 def homepage():
-    return render_template('index.html')  # Make sure to have an index.html or your homepage template here
+    return render_template('index.html')
 
 @app.route('/index')
 def index_page():
@@ -284,7 +284,7 @@ def search():
             'ingredients': recipe_details['ingredients'],
             'instructions': recipe_details['instructions'],
             'image_url': recipe_details['image_url'],
-            'message': None  # No message needed if the recipe is found
+            'message': None
         }
     else:
         # If no exact match, find the recipe with the most matching words
@@ -310,7 +310,7 @@ def search():
                 'ingredients': closest_recipe['ingredients'],
                 'instructions': closest_recipe['instructions'],
                 'image_url': closest_recipe['image_url'],
-                'message': f'Recipe not found. However, this recipe has {max_matches} matching words: {closest_recipe["name"]}.'
+                'message': f'Search Reuslts.'
             }
         else:
             recipe_data = {
